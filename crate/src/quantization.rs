@@ -38,7 +38,7 @@ pub fn mulr(a: i32, b: i32) -> i32 {
 /// Absolute value function (matches shine labs)
 #[inline]
 pub const fn labs(x: i32) -> i32 {
-    x.wrapping_abs()
+    x.unsigned_abs() as i32
 }
 
 /// Inner loop: find optimal quantization step size for given scalefactors
