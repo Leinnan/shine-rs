@@ -38,7 +38,11 @@ pub fn mulr(a: i32, b: i32) -> i32 {
 /// Absolute value function (matches shine labs)
 #[inline]
 pub const fn labs(x: i32) -> i32 {
-    x.unsigned_abs() as i32
+    if x == i32::MIN {
+        i32::MAX
+    } else {
+        x.abs()
+    }
 }
 
 /// Inner loop: find optimal quantization step size for given scalefactors
@@ -541,9 +545,9 @@ pub fn quantize_with_l3loop(
             // result or bad things happen to the quality.
             let ln = mulr(labs(unsafe { *l3loop.xr.add(i) }), scalei);
 
-            if ln < 10000 {
+            if (0..10000).contains(&ln) {
                 // ln < 10000 catches most values
-                *ix_val = l3loop.int2idx[ln as usize]; // quick look up method
+                *ix_val = l3loop.int2idx[(ln as usize).min(9999)]; // quick look up method
             } else {
                 // outside table range so have to do it using floats
                 scale = l3loop.steptab[(stepsize + 127).clamp(0, 127) as usize]; // 2**(-stepsize/4)
